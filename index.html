@@ -1,0 +1,536 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#100b1b">
+    <title>Site pour ma Laety ❤️</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: white;
+            background: #100b1b;
+        }
+
+        /* PHOTO EN ARRIÈRE-PLAN */
+        .background {
+            position: fixed;
+            inset: 0;
+            z-index: -3;
+            background:
+                linear-gradient(rgba(10, 5, 20, .48),
+                                rgba(10, 5, 20, .78)),
+                url("assets/images/laety.jpeg") center/cover no-repeat;
+        }
+
+        /* ÉTOILES */
+        #stars {
+            position: fixed;
+            inset: 0;
+            overflow: hidden;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            top: -15px;
+            width: 3px;
+            height: 3px;
+            background: white;
+            border-radius: 50%;
+            box-shadow: 0 0 8px white, 0 0 15px #ffb4d5;
+            animation: falling linear infinite;
+        }
+
+        @keyframes falling {
+            from {
+                transform: translateY(-10px) translateX(0);
+                opacity: 0;
+            }
+            15% { opacity: 1; }
+            to {
+                transform: translateY(110vh) translateX(70px);
+                opacity: 0;
+            }
+        }
+
+        /* CONTENU */
+        .container {
+            width: min(1100px, 92%);
+            margin: auto;
+            padding: 65px 0 150px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+
+        header h1 {
+            font-size: clamp(30px, 6vw, 58px);
+            font-weight: 300;
+            letter-spacing: 3px;
+            text-shadow: 0 0 25px #ff9dc8;
+        }
+
+        header h1 span {
+            color: #ffacd0;
+            font-weight: 700;
+        }
+
+        header p {
+            margin-top: 13px;
+            color: #f5dce9;
+            letter-spacing: 1px;
+        }
+
+        .intro {
+            max-width: 650px;
+            margin: 0 auto 45px;
+            padding: 20px;
+            text-align: center;
+            line-height: 1.8;
+            background: rgba(255,255,255,.09);
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 18px;
+            backdrop-filter: blur(12px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 400;
+            margin-bottom: 25px;
+        }
+
+        /* CARTES MUSICALES */
+        .music-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 22px;
+        }
+
+        .music-card {
+            padding: 25px;
+            border-radius: 22px;
+            background: rgba(255,255,255,.11);
+            border: 1px solid rgba(255,255,255,.25);
+            backdrop-filter: blur(15px);
+            transition: .3s;
+        }
+
+        .music-card:hover {
+            transform: translateY(-7px);
+            background: rgba(255,255,255,.19);
+            box-shadow: 0 12px 35px rgba(255,130,190,.15);
+        }
+
+        .music-icon {
+            width: 55px;
+            height: 55px;
+            display: grid;
+            place-items: center;
+            border-radius: 50%;
+            background: rgba(255,255,255,.17);
+            font-size: 26px;
+            margin-bottom: 17px;
+        }
+
+        .music-card h3 {
+            font-size: 21px;
+            margin-bottom: 5px;
+        }
+
+        .artist {
+            color: #e7cbd9;
+            font-size: 14px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            cursor: pointer;
+            border: 1px solid rgba(255,255,255,.3);
+            border-radius: 30px;
+            padding: 11px 22px;
+            color: white;
+            background: rgba(255,255,255,.15);
+            transition: .3s;
+        }
+
+        button:hover {
+            background: #ffacd0;
+            color: #27111d;
+        }
+
+        /* ZONE DES PAROLES */
+        .lyrics-section {
+            display: none;
+            max-width: 750px;
+            margin: 45px auto 30px;
+            padding: 28px;
+            border-radius: 24px;
+            background: rgba(15, 8, 25, .64);
+            border: 1px solid rgba(255,255,255,.2);
+            backdrop-filter: blur(18px);
+        }
+
+        .lyrics-section.visible {
+            display: block;
+            animation: appear .6s ease;
+        }
+
+        @keyframes appear {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .lyrics-heading {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .lyrics-heading h2 {
+            color: #ffb2d2;
+            margin-bottom: 7px;
+        }
+
+        .lyrics-heading p {
+            color: #d8c2d0;
+            font-size: 13px;
+        }
+
+        .lyrics {
+            max-height: 330px;
+            overflow-y: auto;
+            padding: 10px;
+            text-align: center;
+            scroll-behavior: smooth;
+        }
+
+        .lyric-line {
+            padding: 12px 8px;
+            color: rgba(255,255,255,.48);
+            font-size: 16px;
+            line-height: 1.6;
+            transition: .3s;
+        }
+
+        .lyric-line.active {
+            color: #ffb2d2;
+            font-size: 19px;
+            font-weight: 700;
+            text-shadow: 0 0 15px rgba(255,150,200,.5);
+        }
+
+        .lyric-line.past {
+            color: rgba(255,255,255,.8);
+        }
+
+        .lyrics::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .lyrics::-webkit-scrollbar-thumb {
+            background: #d78caf;
+            border-radius: 10px;
+        }
+
+        .status {
+            text-align: center;
+            margin-top: 15px;
+            color: #e8c7d9;
+            font-size: 13px;
+        }
+
+        /* LECTEUR AUDIO FIXE */
+        .player {
+            position: fixed;
+            bottom: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(650px, 94%);
+            padding: 17px 20px;
+            z-index: 10;
+            background: rgba(16, 9, 25, .88);
+            border: 1px solid rgba(255,255,255,.2);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 5px 30px rgba(0,0,0,.35);
+        }
+
+        .player-info {
+            margin-bottom: 10px;
+        }
+
+        .player-info strong {
+            color: #ffb2d2;
+        }
+
+        .player-info small {
+            display: block;
+            margin-top: 3px;
+            color: #d8c2d0;
+        }
+
+        audio {
+            width: 100%;
+            height: 38px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 35px;
+            color: #e7cbd9;
+            font-size: 13px;
+        }
+
+        @media(max-width: 600px) {
+            .container {
+                padding-top: 40px;
+            }
+
+            .lyrics-section {
+                padding: 20px 12px;
+            }
+
+            .lyric-line {
+                font-size: 15px;
+            }
+
+            .lyric-line.active {
+                font-size: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="background"></div>
+    <div id="stars"></div>
+
+    <main class="container">
+
+        <header>
+            <h1>Site pour ma <span>Laety</span> ❤️</h1>
+            <p>Quelques chansons, quelques mots… juste pour toi.</p>
+        </header>
+
+        <div class="intro">
+            Il y a des chansons qui expriment ce que les mots
+            ne savent pas toujours dire.
+            Ce petit espace est pour toi, Laety. ❤️
+        </div>
+
+        <h2 class="section-title">🎶 Ta petite playlist</h2>
+
+        <section class="music-grid">
+
+            <article class="music-card">
+                <div class="music-icon">❤️</div>
+                <h3>Valentine</h3>
+                <p class="artist">Andy Bumuntu</p>
+                <button id="valentineButton">▶ Écouter</button>
+            </article>
+
+            <!-- Ajoute les autres chansons ici plus tard -->
+
+        </section>
+
+        <section class="lyrics-section" id="lyricsSection">
+
+            <div class="lyrics-heading">
+                <h2>Valentine ❤️</h2>
+                <p>Andy Bumuntu — Traduction française</p>
+            </div>
+
+            <div class="lyrics" id="lyrics">
+                <p class="status">Chargement des paroles...</p>
+            </div>
+
+            <p class="status" id="lyricsStatus">
+                Lance la musique pour suivre les paroles.
+            </p>
+
+        </section>
+
+        <footer>
+            Fait avec ❤️ pour Laety
+        </footer>
+
+    </main>
+
+    <div class="player" id="player">
+
+        <div class="player-info">
+            <strong id="songTitle">Aucune chanson sélectionnée</strong>
+            <small id="songArtist">Choisis une chanson dans ta playlist</small>
+        </div>
+
+        <audio id="audioPlayer" controls preload="metadata"></audio>
+
+    </div>
+
+    <script>
+        // CRÉATION DES ÉTOILES
+        const stars = document.getElementById("stars");
+
+        for (let i = 0; i < 100; i++) {
+            const star = document.createElement("span");
+            star.className = "star";
+
+            const size = 1 + Math.random() * 3;
+            star.style.width = size + "px";
+            star.style.height = size + "px";
+            star.style.left = Math.random() * 100 + "%";
+            star.style.animationDuration = (5 + Math.random() * 10) + "s";
+            star.style.animationDelay = (-Math.random() * 12) + "s";
+
+            stars.appendChild(star);
+        }
+
+        // ÉLÉMENTS DU LECTEUR
+        const audio = document.getElementById("audioPlayer");
+        const lyricsSection = document.getElementById("lyricsSection");
+        const lyricsContainer = document.getElementById("lyrics");
+        const lyricsStatus = document.getElementById("lyricsStatus");
+
+        let lyricLines = [];
+        let activeIndex = -1;
+
+        // CHARGEMENT DES PAROLES JSON
+        async function loadLyrics() {
+            lyricsContainer.innerHTML =
+                '<p class="status">Chargement des paroles...</p>';
+
+            try {
+                const response = await fetch(
+                    "assets/lyrics/valentine.json"
+                );
+
+                if (!response.ok) {
+                    throw new Error("Fichier JSON introuvable.");
+                }
+
+                const data = await response.json();
+
+                lyricLines = data.paroles;
+
+                lyricsContainer.innerHTML = "";
+
+                lyricLines.forEach((line, index) => {
+                    const paragraph = document.createElement("p");
+                    paragraph.className = "lyric-line";
+                    paragraph.textContent = line.text;
+                    paragraph.dataset.index = index;
+                    lyricsContainer.appendChild(paragraph);
+                });
+
+                lyricsStatus.textContent =
+                    "Les paroles sont prêtes ❤️";
+
+            } catch (error) {
+                lyricsContainer.innerHTML =
+                    '<p class="status">Impossible de charger les paroles. Vérifie le fichier JSON.</p>';
+
+                console.error(error);
+            }
+        }
+
+        // LANCER VALENTINE
+        document.getElementById("valentineButton")
+            .addEventListener("click", async () => {
+
+                lyricsSection.classList.add("visible");
+
+                document.getElementById("songTitle").textContent =
+                    "Valentine";
+
+                document.getElementById("songArtist").textContent =
+                    "Andy Bumuntu";
+
+                if (lyricLines.length === 0) {
+                    await loadLyrics();
+                }
+
+                audio.src = "assets/music/valentine.mp4";
+
+                activeIndex = -1;
+
+                audio.play().catch(() => {
+                    lyricsStatus.textContent =
+                        "Appuie sur lecture pour démarrer la musique.";
+                });
+
+                lyricsSection.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            });
+
+        // SYNCHRONISATION DES PAROLES
+        audio.addEventListener("timeupdate", () => {
+
+            if (!lyricLines.length) return;
+
+            const currentTime = audio.currentTime;
+
+            let index = -1;
+
+            for (let i = 0; i < lyricLines.length; i++) {
+                if (currentTime >= lyricLines[i].time) {
+                    index = i;
+                } else {
+                    break;
+                }
+            }
+
+            if (index === activeIndex) return;
+
+            activeIndex = index;
+
+            const elements =
+                lyricsContainer.querySelectorAll(".lyric-line");
+
+            elements.forEach((element, i) => {
+                element.classList.remove("active", "past");
+
+                if (i < index) {
+                    element.classList.add("past");
+                }
+
+                if (i === index) {
+                    element.classList.add("active");
+
+                    element.scrollIntoView({
+                        behavior: "smooth",
+                        block: "center"
+                    });
+                }
+            });
+
+            if (index >= 0) {
+                lyricsStatus.textContent =
+                    "Écoute et profite de chaque mot ❤️";
+            }
+        });
+
+        audio.addEventListener("ended", () => {
+            lyricsStatus.textContent =
+                "Fin de la chanson ❤️";
+        });
+
+    </script>
+
+</body>
+</html>
